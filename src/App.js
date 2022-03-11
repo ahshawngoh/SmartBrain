@@ -5,11 +5,12 @@ import Navigation from './components/Navigation/Navigation';
 import Logo from './components/Logo/Logo';
 import ImageLinkForm from './components/ImageLinkForm/ImageLinkForm';
 import Rank from './components/Rank/Rank';
+import FaceRecognition from './components/FaceRecognition/FaceRecognition';
 import './App.css';
 
-// const app = new Clarifai.App({
-//   apiKey: 'f2e10946c1b54b178cd4fc64c286f92c'
-// });
+const app = new Clarifai.App({
+  apiKey: 'f2e10946c1b54b178cd4fc64c286f92c'
+});
 
 const particleOptions = {
     fpsLimit: 120,
@@ -89,23 +90,27 @@ class App extends Component {
     super();
     this.state = {
       input: '',
+      imageUrl: ''
     }
   }
 
   onInputChange = (event) => {
-    console.log(event.target.value);
+    this.setState({input: event.target.value});
   }
 
   onButtonSubmit = () => {
-    console.log('click') 
-    // app.models.predict("a403429f2ddf4b49b307e318f00e528b", "https://samples.clarifai.com/face-det.jpg").then(
-    //   function(response) {
-    //     console.log(response);
-    //   },
-    //   function(err) {
-    //     // there was an error
-    //   }
-    // )
+    this.setState({imageUrl: this.state.input})
+    app.models.predict(
+        Clarifai.FACE_DETECT_MODEL, 
+        this.state.input)
+      .then(
+      function(response) {
+        console.log(response[0].data.regions[0].region_info.bounding_box);
+      },
+      function(err) {
+        // there was an error
+      }
+    )
   }
 
   render() {
@@ -130,7 +135,7 @@ class App extends Component {
         <Logo />
         <Rank />
         <ImageLinkForm onInputChange={this.onInputChange} onButtonSubmit={this.onButtonSubmit}/>
-        {/*<FaceRecognition />*/}
+        <FaceRecognition imageUrl={this.state.imageUrl}/>
       </div>
     );
   }
