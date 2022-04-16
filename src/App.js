@@ -87,23 +87,25 @@ const particleOptions = {
     detectRetina: true,
 }
 
+const initialState = {
+  input: '',
+  imageUrl: '',
+  box: {}, // contains values of bounding box
+  route: 'signin', // Start at signin page
+  isSignedIn: false,
+  user: {
+    id: '',
+    name: '',
+    email: '',
+    entries: 0,
+    joined: ''
+  }
+}
+
 class App extends Component {
   constructor() {
     super();
-    this.state = {
-      input: '',
-      imageUrl: '',
-      box: {}, // contains values of bounding box
-      route: 'signin', // Start at signin page
-      isSignedIn: false,
-      user: {
-        id: '',
-        name: '',
-        email: '',
-        entries: 0,
-        joined: ''
-      }
-    }
+    this.state = initialState;
   }
 
   loadUser = (data) => {
@@ -162,6 +164,7 @@ class App extends Component {
           .then(count => {
             this.setState(Object.assign(this.state.user, { entries: count }))
           })
+          .catch(console.log)
         }
         this.displayFaceBox(this.calculateFaceLocation(response))
       })
@@ -170,7 +173,7 @@ class App extends Component {
 
   onRouteChange = (route) => {
     if (route === 'signout') {
-      this.setState({isSignedIn: false})
+      this.setState(initialState)
     } else if (route === 'home') {
       this.setState({isSignedIn: true})
     }
